@@ -130,7 +130,7 @@ function Eyebrow({ children, dark = false, style = {} }) {
 
 // ── LOGO ─────────────────────────────────────────────
 function Logo({ dark = true, size = 26 }) {
-  const src = dark ? 'assets/logo-dark.webp' : 'assets/logo-white.webp';
+  const src = dark ? 'logo-dark.webp' : 'logo-white.webp';
   return <img src={src} alt="is.code" style={{ height: size, width: 'auto' }} />;
 }
 
