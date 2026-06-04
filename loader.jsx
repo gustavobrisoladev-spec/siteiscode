@@ -67,7 +67,7 @@
         }
       },
         React.createElement('img', {
-          src: 'assets/logo-white.webp',
+          src: '/logo-white.webp',
           alt: 'is.code',
           style: { height: 32, width: 'auto' }
         })
