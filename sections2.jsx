@@ -196,7 +196,7 @@ function FounderPortrait() {
         background: '#0A0A0A',
         boxShadow: 'var(--shadow-lg)',
       }}>
-        <img src="founder.jpg" alt="fundador da is.code" style={{
+        <img src="/founder.jpg" alt="fundador da is.code" style={{
           width: '100%', height: '100%', objectFit: 'cover',
           objectPosition: 'center top',
           filter: 'grayscale(8%) contrast(1.02)',
