@@ -1,4 +1,4 @@
-// is.code — Portfolio · Sticky Pin + GSAP Premium
+// is.code — Portfolio · Grid 3 colunas + GSAP Premium
 const { useEffect: useEffectPF, useRef: useRefPF, useState: useStatePF } = React;
 
 if (window.gsap && window.ScrollTrigger) {
@@ -48,6 +48,47 @@ const PROJECTS = [
     resultNum:'0.9s', resultLabel:'carregamento · pagespeed 100',
     year:'2026', bg:'#071410', accent:'#4ADE80', mockup:'petshop',
     img: 'assets/screencapture-antonnie-br-2026-05-21-15_39_29 1.svg',
+    url: null,
+  },
+  // ── CASES FICTÍCIOS (placeholder até substituir por clientes reais) ──
+  {
+    num:'06', client:'academia power fit',
+    tag:'app + site', service:'app de treino + agendamento online',
+    resultNum:'+210%', resultLabel:'matrículas online',
+    year:'2026', bg:'#1A0808', accent:'#FF4757', mockup:'ecommerce',
+    img: null,
+    url: null,
+  },
+  {
+    num:'07', client:'contabilidade prisma',
+    tag:'site institucional', service:'site institucional + captação de leads',
+    resultNum:'+85%', resultLabel:'contatos via formulário',
+    year:'2025', bg:'#080818', accent:'#8B7FFF', mockup:'construction',
+    img: null,
+    url: null,
+  },
+  {
+    num:'08', client:'floricultura jardim doce',
+    tag:'e-commerce', service:'loja virtual + entrega agendada',
+    resultNum:'+96%', resultLabel:'pedidos recorrentes',
+    year:'2026', bg:'#0A140A', accent:'#FF8FD4', mockup:'fashion',
+    img: null,
+    url: null,
+  },
+  {
+    num:'09', client:'auto center rota 8',
+    tag:'site + whatsapp', service:'site + agente de orçamento via whatsapp',
+    resultNum:'4×', resultLabel:'orçamentos / semana',
+    year:'2025', bg:'#100C06', accent:'#FFB020', mockup:'clinic',
+    img: null,
+    url: null,
+  },
+  {
+    num:'10', client:'espaço zen yoga',
+    tag:'landing page', service:'landing page + checkout de assinatura',
+    resultNum:'+58%', resultLabel:'assinantes mensais',
+    year:'2026', bg:'#04120E', accent:'#2DD4BF', mockup:'petshop',
+    img: null,
     url: null,
   },
 ];
@@ -267,99 +308,22 @@ function Mockup({type,accent:C='#C8FF6B'}) {
   );
 }
 
-// ── PORTFOLIO ─────────────────────────────────────────────────────
+// ── PORTFOLIO (GRID 3 COLUNAS) ─────────────────────────────────────
 function Portfolio() {
-  const wrapRef   = useRefPF(null);
-  const trackRef  = useRefPF(null);
-  const [active, setActive]     = useStatePF(0);
-  const [progress, setProgress] = useStatePF(0);
-  const cur = useRefPF(0);
-  const tgt = useRefPF(0);
-  const raf = useRefPF(null);
-
-  useEffectPF(() => {
-    const wrap  = wrapRef.current;
-    const track = trackRef.current;
-    if (!wrap || !track) return;
-
-    const lerp  = (a,b,t) => a+(b-a)*t;
-    const clamp = (v,mn,mx) => Math.min(Math.max(v,mn),mx);
-    const maxSc = () => Math.max(0, track.scrollWidth - wrap.offsetWidth + 56);
-    const cardW = () => (track.children[0]?.offsetWidth||440) + 28;
-
-    const tick = () => {
-      cur.current = lerp(cur.current, tgt.current, 0.1);
-      if (Math.abs(cur.current - tgt.current) > 0.2) {
-        track.style.transform = `translateX(${-cur.current}px)`;
-      }
-      const idx = Math.round(cur.current / cardW());
-      setActive(clamp(idx,0,PROJECTS.length-1));
-      const mx = maxSc();
-      setProgress(mx>0 ? clamp(cur.current/mx,0,1) : 0);
-      raf.current = requestAnimationFrame(tick);
-    };
-    raf.current = requestAnimationFrame(tick);
-
-    const onWheel = (e) => {
-      const rect = wrap.getBoundingClientRect();
-      if (rect.top > 80 || rect.bottom < window.innerHeight*0.4) return;
-      const atS = tgt.current<=0 && e.deltaY<0;
-      const atE = tgt.current>=maxSc() && e.deltaY>0;
-      if (atS||atE) return;
-      e.preventDefault();
-      tgt.current = clamp(tgt.current + e.deltaY*1.9, 0, maxSc());
-    };
-
-    let tx=0;
-    const onTS = (e) => { tx=e.touches[0].clientX; };
-    const onTM = (e) => {
-      const dx=(tx-e.touches[0].clientX)*2.2;
-      tgt.current=clamp(tgt.current+dx,0,maxSc());
-      tx=e.touches[0].clientX;
-    };
-
-    const onKey = (e) => {
-      const rect=wrap.getBoundingClientRect();
-      if(rect.top>0||rect.bottom<100) return;
-      if(e.key==='ArrowRight'){e.preventDefault();tgt.current=clamp(tgt.current+cardW(),0,maxSc());}
-      if(e.key==='ArrowLeft'){e.preventDefault();tgt.current=clamp(tgt.current-cardW(),0,maxSc());}
-    };
-
-    window.addEventListener('wheel', onWheel, {passive:false});
-    window.addEventListener('keydown', onKey);
-    wrap.addEventListener('touchstart',onTS,{passive:true});
-    wrap.addEventListener('touchmove',onTM,{passive:true});
-    return () => {
-      cancelAnimationFrame(raf.current);
-      window.removeEventListener('wheel',onWheel);
-      window.removeEventListener('keydown',onKey);
-      wrap.removeEventListener('touchstart',onTS);
-      wrap.removeEventListener('touchmove',onTM);
-    };
-  },[]);
-
-  // GSAP card entrance
+  // GSAP: entrada dos cards ao rolar até a seção
   useEffectPF(() => {
     if (!window.gsap||!window.ScrollTrigger) return;
     const cards = document.querySelectorAll('.pf-card');
     cards.forEach((card,i) => {
-      gsap.set(card,{opacity:0,y:48});
+      gsap.set(card,{opacity:0,y:40});
       ScrollTrigger.create({
         trigger:'#portfolio', start:'top 72%',
-        onEnter:() => gsap.to(card,{opacity:1,y:0,duration:0.65,delay:i*0.09,ease:'power3.out'}),
+        onEnter:() => gsap.to(card,{opacity:1,y:0,duration:0.6,delay:(i%3)*0.09,ease:'power3.out'}),
         once:true,
       });
     });
     return () => ScrollTrigger.getAll().forEach(t=>t.kill());
   },[]);
-
-  const goTo = (i) => {
-    const track=trackRef.current,wrap=wrapRef.current;
-    if(!track||!wrap) return;
-    const cw=(track.children[0]?.offsetWidth||440)+28;
-    const mx=Math.max(0,track.scrollWidth-wrap.offsetWidth+56);
-    tgt.current=Math.min(i*cw,mx);
-  };
 
   return (
     <section id="portfolio" style={{position:'relative',background:'#080808',overflow:'hidden'}}>
@@ -383,100 +347,76 @@ function Portfolio() {
               <span style={{color:'var(--accent,#C8FF6B)'}}>.</span>
             </h2>
           </div>
-          {/* dot nav */}
-          <div style={{display:'flex',alignItems:'center',gap:8,paddingBottom:6}}>
-            {PROJECTS.map((_,i)=>(
-              <button key={i} onClick={()=>goTo(i)} style={{
-                width:i===active?30:8, height:8, borderRadius:999,
-                background:i===active?'#fff':'rgba(255,255,255,0.18)',
-                border:'none',cursor:'pointer',padding:0,
-                transition:'all 380ms cubic-bezier(0.2,0.7,0.2,1)',
-              }}/>
-            ))}
-          </div>
-        </div>
-        <div style={{
-          marginTop:22,display:'flex',alignItems:'center',gap:10,
-          fontFamily:'var(--font-mono)',fontSize:11,
-          color:'rgba(255,255,255,0.26)',letterSpacing:'0.12em',textTransform:'uppercase',
-        }}>
-          <svg width="30" height="13" viewBox="0 0 30 13" fill="none" aria-hidden>
-            <path d="M0 6.5h24M18 1l6 5.5-6 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          role para explorar
+          <span style={{
+            fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.1em',
+            color:'rgba(255,255,255,0.22)',textTransform:'uppercase',paddingBottom:6,
+          }}>
+            {String(PROJECTS.length).padStart(2,'0')} cases
+          </span>
         </div>
       </div>
 
-      {/* PROGRESS BAR */}
-      <div style={{
+      {/* GRID */}
+      <div className="shell pf-grid" style={{
         position:'relative',zIndex:2,
-        margin:'0 var(--page-gutter)',
-        height:2,background:'rgba(255,255,255,0.06)',borderRadius:999,marginBottom:28,
+        display:'grid',
+        gridTemplateColumns:'repeat(3, minmax(0, 1fr))',
+        gap:28,
+        paddingBottom:'clamp(56px,8vh,110px)',
       }}>
-        <div style={{
-          height:'100%',borderRadius:999,
-          background:'rgba(255,255,255,0.4)',
-          width:`${progress*100}%`,
-          transition:'width 50ms linear',
-        }}/>
-      </div>
-
-      {/* TRACK */}
-      <div ref={wrapRef} style={{position:'relative',zIndex:2,overflow:'hidden',paddingBottom:'clamp(56px,8vh,110px)'}}>
-        <div ref={trackRef} style={{
-          display:'flex',gap:28,
-          paddingLeft:'var(--page-gutter)',paddingRight:'var(--page-gutter)',
-          willChange:'transform',userSelect:'none',
-        }}>
-          {PROJECTS.map((p,i)=><PfCard key={p.num} p={p} i={i} active={active}/>)}
-        </div>
+        {PROJECTS.map((p,i)=><PfCard key={p.num} p={p} i={i}/>)}
       </div>
 
       {/* FOOTER */}
       <div className="shell" style={{
         position:'relative',zIndex:2,
         paddingBottom:'clamp(48px,7vh,96px)',
-        display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:16,
+        display:'flex',alignItems:'center',justifyContent:'flex-end',flexWrap:'wrap',gap:16,
       }}>
-        <span style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.1em',color:'rgba(255,255,255,0.22)',textTransform:'uppercase'}}>
-          {String(active+1).padStart(2,'0')} / {String(PROJECTS.length).padStart(2,'0')} · {PROJECTS[active].client}
-        </span>
         <Button variant="outline-light" size="md" href="https://wa.me/5515996823970?text=is.code" iconRight={Icon.arrowUpRight(13)}>
           quero um projeto assim
         </Button>
       </div>
+
+      {/* Fallback de responsividade para o grid (2 col em tablet, 1 col em mobile) */}
+      <style>{`
+        @media (max-width: 1024px) {
+          .pf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+        }
+        @media (max-width: 640px) {
+          .pf-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 }
 
 // ── CARD ─────────────────────────────────────────────────────────
-function PfCard({p,i,active}) {
+function PfCard({p,i}) {
   const [hov,setHov] = useStatePF(false);
-  const isActive = i===active;
   return (
     <div
       className="pf-card"
       onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       style={{
-        flexShrink:0,
-        width:'clamp(310px,34vw,490px)',
+        width:'100%',
         borderRadius:18,
-        border:`1px solid ${hov?'rgba(255,255,255,0.15)':isActive?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.04)'}`,
+        border:`1px solid ${hov?'rgba(255,255,255,0.15)':'rgba(255,255,255,0.06)'}`,
         background:p.bg,
         overflow:'hidden',
         display:'flex',flexDirection:'column',
         transition:'border-color 280ms,transform 320ms cubic-bezier(0.2,0.7,0.2,1),box-shadow 320ms',
-        transform:hov?'translateY(-8px)':isActive?'translateY(-3px)':'translateY(0)',
+        transform:hov?'translateY(-8px)':'translateY(0)',
         boxShadow:hov
           ?`0 40px 80px rgba(0,0,0,0.55),0 0 0 1px ${p.accent}1A,0 0 50px ${p.accent}0D`
-          :isActive?'0 20px 40px rgba(0,0,0,0.4)':'0 4px 16px rgba(0,0,0,0.3)',
+          :'0 4px 16px rgba(0,0,0,0.3)',
       }}
     >
       {/* accent top line */}
       <div style={{
         height:2,
         background:`linear-gradient(to right,transparent,${p.accent} 35%,${p.accent}88 65%,transparent)`,
-        opacity:hov?1:isActive?0.7:0.25,
+        opacity:hov?1:0.35,
         transition:'opacity 280ms',
       }}/>
 
